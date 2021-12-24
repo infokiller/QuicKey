@@ -44,13 +44,13 @@ define([
 		openExtensionsTab: function(
 			page = "")
 		{
-			chrome.tabs.create({ url: "chrome://extensions/" + page });
+			browser.tabs.create({ url: "chrome://extensions/" + page });
 		},
 
 
 		handleHelpButtonClick: function()
 		{
-			chrome.tabs.create({ url: "https://fwextensions.github.io/QuicKey/" });
+			browser.tabs.create({ url: "https://fwextensions.github.io/QuicKey/" });
 			this.props.tracker.event("extension", "options-help");
 		},
 
@@ -64,21 +64,21 @@ define([
 
 		handleCtrlTabClick: function()
 		{
-			chrome.tabs.create({ url: "https://fwextensions.github.io/QuicKey/ctrl-tab/" });
+			browser.tabs.create({ url: "https://fwextensions.github.io/QuicKey/ctrl-tab/" });
 			this.props.tracker.event("extension", "options-ctrl-tab");
 		},
 
 
 		handleChangeIncognitoClick: function()
 		{
-			this.openExtensionsTab("?id=" + chrome.runtime.id);
+			this.openExtensionsTab("?id=" + browser.runtime.id);
 			this.props.tracker.event("extension", "options-incognito");
 		},
 
 
 		handleSupportClick: function()
 		{
-			chrome.tabs.create({ url: "https://fwextensions.github.io/QuicKey/support/" });
+			browser.tabs.create({ url: "https://fwextensions.github.io/QuicKey/support/" });
 			this.props.tracker.event("extension", "options-support");
 		},
 

@@ -13,7 +13,7 @@ require([
 	const initialShortcuts = gShortcutCache;
 	const platform = /Mac/i.test(navigator.platform) ? "mac" : "win";
 	const now = performance.now();
-	const background = chrome.extension.getBackgroundPage();
+	const background = browser.runtime.getBackgroundPage();
 	const tracker = trackers.popup;
 
 	if (gClose) {

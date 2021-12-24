@@ -157,11 +157,11 @@ define("popup/app", [
 		{
 				// annoyingly, there seems to be a bug in Chrome where the
 				// closed tab is still around when the callback passed to
-				// chrome.tabs.remove() is called.  so we need to add an
+				// browser.tabs.remove() is called.  so we need to add an
 				// onRemoved handler to listen for the actual removal.  this
 				// also handles the edge case where the menu is open and a tab
 				// in another window is closed.
-			chrome.tabs.onRemoved.addListener(this.onTabRemoved);
+			browser.tabs.onRemoved.addListener(this.onTabRemoved);
 
 			window.addEventListener("unload", () => {
 					// if the restore last query option is off, clear any
@@ -410,7 +410,7 @@ define("popup/app", [
 				if (this.mode == "tabs") {
 					if (item.sessionId) {
 							// this is a closed tab, so restore it
-						chrome.sessions.restore(item.sessionId);
+						browser.sessions.restore(item.sessionId);
 						this.props.tracker.event("tabs", "restore");
 					} else {
 							// switch to the tab
@@ -418,15 +418,15 @@ define("popup/app", [
 					}
 				} else if (shiftKey) {
 						// open in a new window
-					chrome.windows.create({ url: item.url });
+					browser.windows.create({ url: item.url });
 					this.props.tracker.event(this.mode, "open-new-win");
 				} else if (modKey) {
 						// open in a new tab
-					chrome.tabs.create({ url: item.url });
+					browser.tabs.create({ url: item.url });
 					this.props.tracker.event(this.mode, "open-new-tab");
 				} else {
 						// open in the same tab
-					chrome.tabs.update({ url: item.url });
+					browser.tabs.update({ url: item.url });
 					this.props.tracker.event(this.mode, "open");
 				}
 
@@ -505,7 +505,7 @@ define("popup/app", [
 					if (!isNaN(item.id)) {
 							// the onTabRemoved handler below will re-init the
 							// list, which will then show the tab as closed
-						chrome.tabs.remove(item.id);
+						browser.tabs.remove(item.id);
 						this.props.tracker.event(query ? "tabs" : "recents", "close");
 					} else {
 							// this is a closed tab that the user wants to
@@ -513,7 +513,7 @@ define("popup/app", [
 						deleteItem(({url}) => {
 								// deleting the URL from history also deletes
 								// any session for that URL
-							chrome.history.deleteUrl({ url });
+							browser.history.deleteUrl({ url });
 
 								// since this closed tab is also in the recents
 								// list, we have to pull it from there as well.
@@ -527,7 +527,7 @@ define("popup/app", [
 					}
 				} else if (mode == "bookmarks") {
 					if (confirm(DeleteBookmarkConfirmation)) {
-						deleteItem(({id}) => chrome.bookmarks.remove(id));
+						deleteItem(({id}) => browser.bookmarks.remove(id));
 					}
 				} else if (mode == "history") {
 					const url = item.originalURL;
@@ -535,7 +535,7 @@ define("popup/app", [
 						// we have to use originalURL to delete the history item,
 						// since it may have been a suspended page and we convert
 						// url to the unsuspended version
-					deleteItem(() => chrome.history.deleteUrl({ url }));
+					deleteItem(() => browser.history.deleteUrl({ url }));
 
 						// just in case this URL was also recently closed, remove
 						// it from the tabs and recents lists, since it will no
@@ -710,8 +710,8 @@ define("popup/app", [
 
 		onOptionsClick: function()
 		{
-			chrome.tabs.create({
-				url: chrome.extension.getURL("options.html")
+			browser.tabs.create({
+				url: browser.runtime.getURL("options.html")
 			});
 			this.props.tracker.event("extension", "open-options");
 		},

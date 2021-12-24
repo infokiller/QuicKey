@@ -1,5 +1,5 @@
 define(function() {
-	const background = chrome.extension.getBackgroundPage();
+	const background = browser.extension.getBackgroundPage();
 	const shared = background.shared || (background.shared = {});
 
 

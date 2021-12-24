@@ -270,7 +270,7 @@ define(['module'], function (module) {
 
 //  modify the URL to point at the extension file
 //            xhr.open('GET', url, true);
-            xhr.open('GET', chrome.extension.getURL(url), true);
+            xhr.open('GET', browser.runtime.getURL(url), true);
 
             //Allow plugins direct access to xhr headers
             if (headers) {

@@ -99,7 +99,7 @@ define([
 					if (key == ShowTabCount.Key
 							|| key == CurrentWindowLimitRecents.Key
 							|| key == CurrentWindowLimitSearch.Key) {
-						chrome.runtime.sendMessage({ [key]: value });
+						browser.runtime.sendMessage({ [key]: value });
 					}
 
 					return settings;

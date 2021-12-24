@@ -35,13 +35,13 @@ IconPaths.dark = {
 	normal: IconPaths.light.inverted,
 	inverted: IconPaths.light.normal
 };
-const Manifest = chrome.runtime.getManifest();
+const Manifest = browser.runtime.getManifest();
 
 
 let gStartingUp = false;
 let gIgnoreNextTabActivation = false;
 let gInstalledPromise = new Promise(resolve => {
-	chrome.runtime.onInstalled.addListener(details => resolve(details));
+	browser.runtime.onInstalled.addListener(details => resolve(details));
 });
 
 
@@ -85,9 +85,9 @@ function debounce(
 }
 
 
-chrome.runtime.onStartup.addListener(() => {
+browser.runtime.onStartup.addListener(() => {
 	const onActivated = debounce(() => {
-		chrome.tabs.onActivated.removeListener(onActivated);
+		browser.tabs.onActivated.removeListener(onActivated);
 
 DEBUG && console.log("==== last onActivated");
 
@@ -115,7 +115,7 @@ DEBUG && console.log("===== updateAll done");
 DEBUG && console.log("== onStartup");
 
 	gStartingUp = true;
-	chrome.tabs.onActivated.addListener(onActivated);
+	browser.tabs.onActivated.addListener(onActivated);
 });
 
 
@@ -347,14 +347,14 @@ require([
 	}
 
 
-	chrome.tabs.onActivated.addListener(event => {
+	browser.tabs.onActivated.addListener(event => {
 		if (!gStartingUp) {
 			handleTabActivated(event);
 		}
 	});
 
 
-	chrome.tabs.onCreated.addListener(tab => {
+	browser.tabs.onCreated.addListener(tab => {
 		updateTabCount(1);
 
 		if (!gStartingUp && !tab.active) {
@@ -367,7 +367,7 @@ require([
 	});
 
 
-	chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+	browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
 		updateTabCount(-1);
 
 			// debounce the handling of a removed tab since Chrome seems to
@@ -381,7 +381,7 @@ require([
 
 		// tabs seem to get replaced with new IDs when they're auto-discarded by
 		// Chrome, so we want to update any recency data for them
-	chrome.tabs.onReplaced.addListener((newID, oldID) => {
+	browser.tabs.onReplaced.addListener((newID, oldID) => {
 		if (!gStartingUp) {
 			recentTabs.replace(oldID, newID);
 		}
@@ -390,11 +390,11 @@ require([
 
 		// the onActivated event isn't fired when the user switches between
 		// windows, so get the active tab in this window and store it
-	chrome.windows.onFocusChanged.addListener(windowID => {
+	browser.windows.onFocusChanged.addListener(windowID => {
 			// check this event's windowID against the last one we saw and
 			// ignore the event if it's the same.  that happens when the popup
 			// opens and no tab is selected or the user's double-pressing.
-		if (!gStartingUp && windowID != chrome.windows.WINDOW_ID_NONE &&
+		if (!gStartingUp && windowID != browser.windows.WINDOW_ID_NONE &&
 				windowID != lastWindowID) {
 			lastWindowID = windowID;
 			cp.tabs.query({ active: true, windowId: windowID })
@@ -410,7 +410,7 @@ require([
 	});
 
 
-	chrome.commands.onCommand.addListener(command => {
+	browser.commands.onCommand.addListener(command => {
 		if (!gStartingUp) {
 			handleCommand(command);
 		} else {
@@ -427,7 +427,7 @@ require([
 	});
 
 
-	chrome.runtime.onConnect.addListener(port => {
+	browser.runtime.onConnect.addListener(port => {
 		const connectTime = Date.now();
 		let closedByEsc = false;
 
@@ -457,7 +457,7 @@ require([
 	});
 
 
-	chrome.runtime.onMessage.addListener(message => {
+	browser.runtime.onMessage.addListener(message => {
 		if (k.ShowTabCount.Key in message) {
 			showTabCount = message[k.ShowTabCount.Key];
 
@@ -471,12 +471,12 @@ require([
 	});
 
 
-	chrome.runtime.onUpdateAvailable.addListener(details => {
+	browser.runtime.onUpdateAvailable.addListener(details => {
 		function restartExtension()
 		{
 			if (!popupIsOpen) {
 DEBUG && console.log("=== reloading");
-				chrome.runtime.reload();
+				browser.runtime.reload();
 			} else {
 				setTimeout(restartExtension, RestartDelay);
 			}
@@ -559,8 +559,8 @@ DEBUG && console.log("=== startup done", performance.now());
 					// who had previously installed QuicKey and have their
 					// language set to Chinese or who have open tabs with
 					// Chinese characters
-				chrome.tabs.create({
-					url: chrome.extension.getURL("options.html?pinyin")
+				browser.tabs.create({
+					url: browser.runtime.getURL("options.html?pinyin")
 				});
 				backgroundTracker.event("extension", "open-options");
 			}
