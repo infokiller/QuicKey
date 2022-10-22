@@ -84,9 +84,10 @@
 
 html, body {
 	width: 500px;
-	height: 35px;
 	margin: 0;
 	padding: 0;
+	/* hides a resize flash that happens when popup is opened on Firefox */
+	scrollbar-width: none;
 }
 
 body {
